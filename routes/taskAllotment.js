@@ -50,9 +50,10 @@ router.get("/all", isAuthenticated, async (request, response) => {
 // Get a specific taskAllotment by ID
 router.get("/view/:id", isAuthenticated, async (request, response) => {
   try {
+    console.log(request.params)
     let taskAllotmentId = request.params.id;
     console.log(taskAllotmentId);
-    const taskAllotment = await TaskAllotment.findOne({ taskAllotmentId: taskAllotmentId });
+    const taskAllotment = await TaskAllotment.findById(taskAllotmentId);
     console.log(taskAllotment.taskAllotmentId);
     if (!taskAllotment) {
       return response.status(404).json({ error: "TaskAllotment not found" });
@@ -106,6 +107,32 @@ router.put("/:id", isAuthenticated, async (request, response) => {
     response.status(500).json({ error: error.message });
   }
 });
+
+
+router.put("/:id/comments", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comments } = req.body;
+
+    // Update the task allotment document with the new comments
+    const updatedTaskAllotment = await TaskAllotment.findByIdAndUpdate(
+      id,
+      { comments },
+      { new: true }
+    );
+
+    if (!updatedTaskAllotment) {
+      return res.status(404).json({ error: "Task allotment not found" });
+    }
+
+    // Return the updated task allotment document as the response
+    res.json(updatedTaskAllotment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+})
+
 
 // Delete a taskAllotment by ID
 router.delete("/delete/:id", isAuthenticated, async (request, response) => {

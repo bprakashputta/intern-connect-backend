@@ -35,6 +35,7 @@ router.get("/login/verify", (request, response) => {
   console.log("Verifying login status");
   console.log("Status : ", request.isAuthenticated());
   console.log(request.user);
+  console.log("request",request);
   if (request.isAuthenticated()) {
     // STEP 1: If User is authenticated, return the logged-in user object
     return response.json({ user: request.user });
