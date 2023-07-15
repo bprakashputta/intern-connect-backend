@@ -99,9 +99,13 @@ app.get("/index", (request, response) => {
   response.redirect(process.env.REACT_APP_SERVER_URL + "/");
 });
 
-app.get("*", (request, response) => {
-  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
-});
+app.use(express.static(path.join(__dirname, "../intern-connect-frontend/build")));
+
+app.get("*", (req, res) =>
+  res.sendFile(
+    path.resolve(__dirname, "../", "intern-connect-frontend", "build", "index.html")
+  )
+);
 
 app.listen(PORT, (err) => {
   if (err) {

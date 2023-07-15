@@ -112,6 +112,7 @@ passport.use('local-login', new LocalStrategy({
             console.log(`User : ${user}`);
             // STEP 3: User with email already exists
             if (user.source != "Email") {
+                console.log("User signed up through a different method previously.");
                 return done(null, false, {
                     message: "You have previously signed up with a different sign in method"
                 });
@@ -255,6 +256,7 @@ passport.use(new GoogleStrategy(
                     });
                 }
                 // User Already exists
+                console.log("Returning user, login success");
                 return done(null, user);
             }
         })
