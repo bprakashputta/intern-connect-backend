@@ -100,9 +100,7 @@ app.get("/index", (request, response) => {
 });
 
 app.get("*", (request, response) => {
-  response.sendFile(
-    path.resolve(__dirname, "../intern-connect-frontend/public", "index.html")
-  );
+  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
 });
 
 app.listen(PORT, (err) => {
