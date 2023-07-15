@@ -101,7 +101,7 @@ app.get("/index", (request, response) => {
 });
 
 app.get("*", (request, response) => {
-  response.sendFile(path.resolve(__dirname, "../frontend/build", "index.html"));
+  response.sendFile(process.env.REACT_APP_SERVER_URL + "/");
 });
 
 app.listen(PORT, (err) => {
