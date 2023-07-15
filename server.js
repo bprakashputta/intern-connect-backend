@@ -14,8 +14,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 
 //AWS
-const fileUploadRouter = require('./routes/fileUpload'); // Import the file upload router
-
+const fileUploadRouter = require("./routes/fileUpload"); // Import the file upload router
 
 // PATH TO STORE ENVIRONMENT VARIABLES
 const dir = process.cwd();
@@ -33,8 +32,8 @@ app.use(
   cors({
     origin: process.env.REACT_APP_SERVER_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT","DELETE","PATCH","OPTIONS","HEAD"],
-    allowedHeaders: "access-control-allow-origin,Content-Type",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+    allowedHeaders: "access-control-allow-origin,Content-Type,User-id",
   })
 );
 app.use((req, res, next) => {
@@ -84,12 +83,12 @@ app.use("/jobs", job);
 app.use("/task", task);
 app.use("/taskallotment", taskAllotment);
 app.use("/jobapplication", jobApplication);
-app.use("/file",fileUploadRouter);
+app.use("/file", fileUploadRouter);
 
 // GET ROUTE for HOME PAGE
-app.get('/', (request, response)=>{
-    // response.send('Hello Bhanu, welcome to the website');
-    response.redirect(process.env.REACT_APP_SERVER_URL+"/");
+app.get("/", (request, response) => {
+  // response.send('Hello Bhanu, welcome to the website');
+  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
 });
 
 app.get("/home", (request, response) => {
@@ -101,7 +100,7 @@ app.get("/index", (request, response) => {
 });
 
 app.get("*", (request, response) => {
-  response.sendFile(process.env.REACT_APP_SERVER_URL + "/");
+  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
 });
 
 app.listen(PORT, (err) => {
