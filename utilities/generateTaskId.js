@@ -5,8 +5,8 @@ async function generateTaskId() {
   const length = 6;
 
   while (true) {
-    let taskId = "";
-
+    let taskId = "TASK";
+    
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
       taskId += characters.charAt(randomIndex);

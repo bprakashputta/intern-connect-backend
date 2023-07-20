@@ -3,17 +3,14 @@ const router = express.Router();
 const Joi = require("joi");
 const { TaskAllotment } = require("../models/taskAllotment");
 const taskAllotmentValidation = require("../validations/taskAllotmentValidation");
-
+const { ObjectId } = require("mongodb");
 
 // Define the isAuthenticated middleware
 function isAuthenticated(request, response, next) {
   next();
 }
 
-// Use the isAuthenticated middleware in your route handler
-router.post("/", isAuthenticated, (req, res) => {
-  // Handle the POST request logic for the authenticated route here
-});
+router.post("/", isAuthenticated, (req, res) => {});
 
 // Create a new taskAllotment
 router.post("/create", isAuthenticated, async (request, response) => {
@@ -24,9 +21,6 @@ router.post("/create", isAuthenticated, async (request, response) => {
       console.log(error);
       return response.status(400).json({ error: error.details[0].message });
     }
-    // Generate taskAllotment id using generate taskAllotment id function
-    console.log("Schema sent in request body is valid");
-    console.log(request.body);
 
     const newTaskAllotment = new TaskAllotment(request.body);
     const savedTaskAllotment = await newTaskAllotment.save();
@@ -37,11 +31,11 @@ router.post("/create", isAuthenticated, async (request, response) => {
   }
 });
 
-// Get all companies
+// Get all taskAllotments
 router.get("/all", isAuthenticated, async (request, response) => {
   try {
-    const companies = await TaskAllotment.find();
-    return response.json(companies);
+    const taskAllotments = await TaskAllotment.find();
+    return response.json(taskAllotments);
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
@@ -50,31 +44,12 @@ router.get("/all", isAuthenticated, async (request, response) => {
 // Get a specific taskAllotment by ID
 router.get("/view/:id", isAuthenticated, async (request, response) => {
   try {
-    console.log(request.params)
     let taskAllotmentId = request.params.id;
-    console.log(taskAllotmentId);
     const taskAllotment = await TaskAllotment.findById(taskAllotmentId);
-    console.log(taskAllotment.taskAllotmentId);
     if (!taskAllotment) {
       return response.status(404).json({ error: "TaskAllotment not found" });
     }
     response.json(taskAllotment);
-  } catch (error) {
-    return response.status(500).json({ error: error.message });
-  }
-});
-
-// Get a specific taskAllotment by ID
-router.get("/:id", isAuthenticated, async (request, response) => {
-  try {
-    let taskAllotmentId = request.params.id;
-    console.log(taskAllotmentId);
-    const taskAllotment = await TaskAllotment.findById(taskAllotmentId);
-    console.log(taskAllotment.taskAllotmentId);
-    if (!taskAllotment) {
-      return response.status(404).json({ error: "TaskAllotment not found" });
-    }
-    response.json({ taskAllotment });
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
@@ -83,61 +58,68 @@ router.get("/:id", isAuthenticated, async (request, response) => {
 // Update a taskAllotment by ID
 router.put("/:id", isAuthenticated, async (request, response) => {
   try {
-    console.log("Received Edit request bhanu");
+    const taskAllotmentId = request.params.id;
     const { error } = await taskAllotmentValidation(request.body);
+
     if (error) {
-      console.log(error);
       return response.status(400).json({ error: error.details[0].message });
     }
-    // console.log(request.body);
-    const taskAllotment = await TaskAllotment.findByIdAndUpdate(
-      request.params.id,
-      request.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
 
-    if (!taskAllotment) {
-      return response.status(404).json({ error: "TaskAllotment not found" });
+    const updatedTaskAllotment = await TaskAllotment.findByIdAndUpdate(taskAllotmentId, request.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTaskAllotment) {
+      return response.status(404).json({ message: "Task Allotment not found" });
     }
-    response.json(taskAllotment);
+
+    return response.json(updatedTaskAllotment);
   } catch (error) {
-    response.status(500).json({ error: error.message });
+    return response.status(500).json({ error: error.message });
   }
 });
 
 
-router.put("/:id/comments", async (req, res) => {
+router.patch("/:id/comments", isAuthenticated, async (req, res) => {
   try {
-    const { id } = req.params;
-    const { comments } = req.body;
+    console.log("Inside patch");
+    const taskAllotmentId = req.params.id;
 
-    // Update the task allotment document with the new comments
-    const updatedTaskAllotment = await TaskAllotment.findByIdAndUpdate(
-      id,
-      { comments },
-      { new: true }
-    );
-
-    if (!updatedTaskAllotment) {
-      return res.status(404).json({ error: "Task allotment not found" });
+    const taskAllotment = await TaskAllotment.findById(taskAllotmentId);
+    if (!taskAllotment) {
+      return res.status(404).json({ error: "TaskAllotment not found" });
     }
 
-    // Return the updated task allotment document as the response
+    const { error } = Joi.array()
+      .items(
+        Joi.object({
+          text: Joi.string().required(),
+          posted_by: Joi.string().required(),
+        })
+      )
+      .validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    taskAllotment.comments.push(...req.body);
+
+    const updatedTaskAllotment = await taskAllotment.save();
+
     res.json(updatedTaskAllotment);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: error.message });
   }
-})
-
+});
 
 // Delete a taskAllotment by ID
 router.delete("/delete/:id", isAuthenticated, async (request, response) => {
   try {
-    const taskAllotment = await TaskAllotment.findByIdAndDelete(request.params.id);
+    const taskAllotment = await TaskAllotment.findByIdAndDelete(
+      request.params.id
+    );
     if (!taskAllotment) {
       return response.status(404).json({ error: "TaskAllotment not found" });
     }
