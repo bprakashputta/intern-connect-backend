@@ -18,7 +18,7 @@ const upload = multer({
     key: (req, file, cb) => {
       const userId = req.headers["user-id"];
       const folderName = req.params.folderName || `user_${userId}`; 
-      const fileName = file.originalname;
+      const fileName = file.originalname; 
       const key = `${folderName}/${fileName}`;
       cb(null, key);
     },
