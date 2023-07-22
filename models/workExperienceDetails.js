@@ -49,23 +49,22 @@ const workExperienceDetailsSchema = new mongoose.Schema({
 const workExperienceDetails = mongoose.model('workExperienceDetails', workExperienceDetailsSchema);
 
 async function validate(workExperienceDetails){
-    const schema = Joi.object({
+    const roleSchema = Joi.object({
+        roleName: Joi.string().required().max(255),
+        roleType: Joi.string().required().valid('Full-Time', 'Internship', 'Part-Time'),
+        startDate: Joi.number().required(),
+        endDate: Joi.number().required(),
+        description: Joi.string().required().max(2000)
+      }).required().options({ abortEarly: false });
+    
+      const schema = Joi.object({
         experience: Joi.array().items(
-            Joi.object({
-                companyName: Joi.string().required().max(255),
-                roles: Joi.array().items({
-                    roleName: Joi.string().required().max(255),
-                    roleType: Joi.string().required().valid('Full-Time', 'Internship', 'Part-Time'),
-                    // TODO: ONE MORE VALIDATION FOR START DATE TO BE
-                    //  LESS THAN END DATA NEEDS TO BE ADDED
-                    startDate: Joi.number().required(),
-                    endDate: Joi.number().required(),
-                    description: Joi.string().required().max(2000)
-                }).required().min(1)
-            })
+          Joi.object({
+            companyName: Joi.string().required().max(255),
+            roles: Joi.array().items(roleSchema).required().min(1)
+          })
         )
-
-    });
+      }).options({ abortEarly: false });
 
     return schema.validate(workExperienceDetails);
 }

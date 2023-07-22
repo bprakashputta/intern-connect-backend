@@ -41,13 +41,13 @@ const personalDetails = mongoose.model('PersonalDetails', personalDetailsSchema)
 
 async function validate(personalDetails){
     const schema = Joi.object({
-        givenName: Joi.string().required().min(5).max(255),
-        surName: Joi.string().required().min(5).max(255),
-        preferred_name: Joi.string().required().min(5).max(255),
-        emailId: Joi.string().max(255).required().email(),
-        mobileNumber: Joi.number().required(),
-        location: Joi.string()
-    });
+        givenName: Joi.string().max(255).required(),
+        surname: Joi.string().max(255).required(),
+        preferredName: Joi.string().max(255).required(),
+        emailId: Joi.string().email().max(255).required(),
+        mobileNumber: Joi.number().integer().required(),
+        location: Joi.string().required()
+    }).options({ abortEarly: false });
 
     return schema.validate(personalDetails);
 }

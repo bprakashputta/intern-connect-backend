@@ -59,11 +59,11 @@ const userSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    // profile: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Profile',
-    //     unique: true
-    // },
+    profile: {
+        type: Schema.Types.ObjectId,
+        ref: 'Profile',
+        unique: true
+    },
     profilePhoto:{
         type: String
     },
