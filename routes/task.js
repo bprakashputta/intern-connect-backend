@@ -55,18 +55,21 @@ router.post("/", isAuthenticated, (req, res) => {
 });
 
 // Create a new task
-router.post("/create", isAuthenticated, async (request, response) => {
+router.post("/create", async (request, response) => {
   try {
-    // const { error } = await taskValidation(request.body);
-    // if (error) {
-    //   console.log(error);
-    //   return response.status(400).json({ error: error.details[0].message });
-    // }
+    console.log("Requested - CREATE TASK")
     // Generate task id using generate task id function
     let taskId = await generateTaskId();
 
-    request.body.taskId = taskId;
-    console.log(request.body);
+    request.body.task_id = taskId;
+    console.log("check 1")
+    const { error } = await taskValidation(request.body);
+    console.log("check 2");
+    if (error) {
+      console.log(error);
+      return response.status(400).json({ error: error.details[0].message });
+    }
+    console.log("check 3");
 
     const newTask = new Task(request.body);
     const savedTask = await newTask.save();
