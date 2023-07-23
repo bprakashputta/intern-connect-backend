@@ -10,14 +10,6 @@ const generateJobId = require("../utilities/generateJobId");
 // Define the isAuthenticated middleware
 function isAuthenticated(request, response, next) {
   next();
-  // Check if the user is authenticated
-  // if (request.isAuthenticated()) {
-  //   // User is authenticated, proceed to the next middleware or route handler
-  //   return next();
-  // }
-  // // User is not authenticated, redirect to login page or send an error response
-  // return response.send('You are not authorised to make this request');
-  // res.redirect('/login'); // Example redirect to the login page
 }
 
 // // Get all jobs with applied status for a specific user
@@ -58,7 +50,7 @@ router.get("/all/:userId", async (request, response) => {
 // Jobs pagination
 router.get("/show/:userId", async (req, res) => {
 
-    const userId = req.params.userId;
+  const userId = req.params.userId;
 
   const { pageNumber = 1, keyword, cat, location, skills } = req.query;
   const query = {};
@@ -124,12 +116,10 @@ router.post("/create", isAuthenticated, async (request, response) => {
     // Generate job id using generate job id function
     let jobId = await generateJobId();
 
-    request.body.jobId = jobId;
-    console.log(request.body);
+    request.body.job_id = jobId;
 
     const newJob = new Job(request.body);
     const savedJob = await newJob.save();
-
     return response.status(201).json(savedJob);
   } catch (error) {
     return response.status(500).json({ error: error.message });

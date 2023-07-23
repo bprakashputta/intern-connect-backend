@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const Joi = require("joi");
 const { Task } = require("../models/task");
+const {TaskAllotment} = require("../models/taskAllotment");
 const taskValidation = require("../validations/taskValidation");
 const generateTaskId = require("../utilities/generateTaskId");
 
@@ -20,6 +21,30 @@ router.get("/all", async (request, response) => {
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
+});
+
+
+// Get all tasks for a specific user
+router.get("/:userid/all", async (request, response) => {
+  try {
+    const taskAllotments = await TaskAllotment.find({user_id: request.params.userid});
+    const tasks = await Task.find({task_id: taskAllotments.map(taskAllotment => taskAllotment.task_id)});
+    const tasksWithIds = tasks.map((task) => {
+      const correspondingTaskAllotment = taskAllotments.find(
+        (taskAllotment) => taskAllotment.task_id === task.task_id
+      );
+      return {
+        ...task.toObject(),
+        taskAllotmentId: correspondingTaskAllotment
+          ? correspondingTaskAllotment._id
+          : null,
+      };
+    });
+    return response.json({tasks: tasksWithIds});
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+
 });
 
 
