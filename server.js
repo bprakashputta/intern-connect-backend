@@ -113,5 +113,11 @@ app.listen(PORT, (err) => {
     console.log("SERVER RAN INTO AN ERROR : ", err);
     return err;
   }
+  console.log("####################################");
   console.log(`SERVER IS RUNNING ON PORT : ${PORT}`);
+  console.log(process.env.AWS_ACCESS_KEY_ID);
+  console.log(process.env.AWS_SECRET_ACCESS_KEY);
+  console.log(process.env.REGION);
+  console.log(process.env.BUCKET);
+  console.log("####################################");
 });
