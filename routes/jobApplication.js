@@ -14,7 +14,6 @@ function isAuthenticated(request, response, next) {
 router.get("/appliedby/:id", async (request, response) => {
   try {
     let userId = request.params.id;
-    console.log("Inside appliedby",userId)
     const appliedJobs = await JobApplication.find({
       user_id: userId,
     });

@@ -3,7 +3,9 @@ const router = express.Router();
 const passport = require("passport");
 const Joi = require("joi");
 const { Job } = require("../models/job");
-const {JobApplication} = require("../models/jobApplication");
+const { JobApplication } = require("../models/jobApplication");
+const { Task } = require("../models/task");
+const { User } = require("../models/user");
 const jobValidation = require("../validations/jobValidation");
 const generateJobId = require("../utilities/generateJobId");
 
@@ -12,7 +14,22 @@ function isAuthenticated(request, response, next) {
   next();
 }
 
-// // Get all jobs with applied status for a specific user
+// Get all user details applied for a specific job
+router.get("/:jobid/appliedby", async (request, response) => {
+  try {
+    let jobId = request.params.jobid;
+    const Jobs = await JobApplication.find({ job_id: jobId });
+    const userIds = Jobs.map((job) => job.user_id);
+    const users = await User.find({ _id: userIds }).select(
+      "firstName lastName email profilePhoto"
+    );
+    response.json({ users: users });
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+});
+
+// Get all jobs with applied status for a specific user
 router.get("/all/:userId", async (request, response) => {
   try {
     const userId = request.params.userId;
@@ -46,19 +63,25 @@ router.get("/all/:userId", async (request, response) => {
   }
 });
 
-
 // Jobs pagination
 router.get("/show/:userId", async (req, res) => {
-
   const userId = req.params.userId;
 
   const { pageNumber = 1, keyword, cat, location, skills } = req.query;
   const query = {};
-  if (keyword) {query.role_name = { $regex: keyword, $options: "i" };}
-  if (cat) {query.job_type = { $regex: cat, $options: "i" };}
-  if (location) {query.location = { $regex: location, $options: "i" };}
-  if (skills) {query.skills_required = { $in: skills.split(",") };}
-  console.log(query)
+  if (keyword) {
+    query.role_name = { $regex: keyword, $options: "i" };
+  }
+  if (cat) {
+    query.job_type = { $regex: cat, $options: "i" };
+  }
+  if (location) {
+    query.location = { $regex: location, $options: "i" };
+  }
+  if (skills) {
+    query.skills_required = { $in: skills.split(",") };
+  }
+  console.log(query);
   const totalJobs = await Job.countDocuments(query);
 
   // Pagination
@@ -90,7 +113,6 @@ router.get("/show/:userId", async (req, res) => {
       JobsWithStatus.push(jobWithAppliedStatus);
     }
   }
-  
 
   res.json({
     totalJobs,
@@ -100,13 +122,23 @@ router.get("/show/:userId", async (req, res) => {
   });
 });
 
+// Get all tasks related to a specific Job
+router.get("/:jobid/tasks/all", async (request, response) => {
+  try {
+    const tasks = await Task.find({ job_id: request.params.jobid });
+    return response.json({ tasks: tasks });
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+});
+
 // Use the isAuthenticated middleware in your route handler
 router.post("/", isAuthenticated, (req, res) => {
   // Handle the POST request logic for the authenticated route here
 });
 
 // Create a new job
-router.post("/create", isAuthenticated, async (request, response) => {
+router.post("/create", async (request, response) => {
   try {
     const { error } = await jobValidation(request.body);
     if (error) {
@@ -194,9 +226,5 @@ router.delete("/delete/:id", isAuthenticated, async (request, response) => {
     response.status(500).json({ message: "Failed to delete job", error });
   }
 });
-
-
-
-
 
 module.exports = router;
