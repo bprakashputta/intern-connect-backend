@@ -6,12 +6,12 @@ const profileController = require('../controllers/profileController');
 router.post('/', profileController.createProfile);
 
 // Get a profile by ID
-router.get('/:id', profileController.getProfileById);
+router.get('/:username', profileController.getProfileById);
 
 // Update a profile by ID
-router.put('/:id', profileController.updateProfileById);
+router.put('/:username', profileController.updateProfileById);
 
 // Delete a profile by ID
-router.delete('/:id', profileController.deleteProfileById);
+router.delete('/:username', profileController.deleteProfileById);
 
 module.exports = router;
