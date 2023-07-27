@@ -39,6 +39,8 @@
     "passport-local-mongoose": "^8.0.0",
     "passport-magic-link": "^2.1.0",
     "path": "^0.12.7",
+    "pdf-lib": "^1.17.1",
+    "razorpay": "^2.9.1",
     "validator": "^13.9.0"
   }
 }
