@@ -23,7 +23,7 @@ async function validate(socialMediaLinks){
         githubURL: Joi.string().uri().label('GitHub URL').allow(''),
         linkedinURL: Joi.string().uri().label('Linkedin URL').allow(''),
         portfolioURL: Joi.string().uri().label('Portfolio URL').allow('')
-    });
+    }).options({ abortEarly: false });
 
     return schema.validate(socialMediaLinks);
 }

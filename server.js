@@ -90,21 +90,26 @@ app.use("/file", fileUploadRouter);
 app.use("/payment", paymentRoutes);
 
 // GET ROUTE for HOME PAGE
-app.get("/", (request, response) => {
-  // response.send('Hello Bhanu, welcome to the website');
-  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
-});
+// app.get("/", (request, response) => {
+//   // response.send('Hello Bhanu, welcome to the website');
+//   response.redirect(process.env.REACT_APP_SERVER_URL + "/");
+// });
 
-app.get("/home", (request, response) => {
-  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
-});
+// app.get("/home", (request, response) => {
+//   response.redirect(process.env.REACT_APP_SERVER_URL + "/");
+// });
 
-app.get("/index", (request, response) => {
-  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
-});
+// app.get("/index", (request, response) => {
+//   response.redirect(process.env.REACT_APP_SERVER_URL + "/");
+// });
 
-app.get("*", (request, response) => {
-  response.redirect(process.env.REACT_APP_SERVER_URL + "/");
+app.use(express.static(path.join(__dirname, "../intern-connect-frontend/build")));
+
+app.get("*", (req, res) => {
+  console.log("Hi BHanu, Request arrived here.");  
+  res.sendFile(
+    path.resolve(__dirname, "../", "intern-connect-frontend", "build", "index.html")
+  )
 });
 
 app.listen(PORT, (err) => {
@@ -112,5 +117,11 @@ app.listen(PORT, (err) => {
     console.log("SERVER RAN INTO AN ERROR : ", err);
     return err;
   }
+  console.log("####################################");
   console.log(`SERVER IS RUNNING ON PORT : ${PORT}`);
+  console.log(process.env.AWS_ACCESS_KEY_ID);
+  console.log(process.env.AWS_SECRET_ACCESS_KEY);
+  console.log(process.env.REGION);
+  console.log(process.env.BUCKET);
+  console.log("####################################");
 });

@@ -9,12 +9,12 @@ const passportLocal = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 
-router.get("/login", (request, response) => {
-  if (request.isAuthenticated()) {
-    return response.redirect(process.env.REACT_APP_SERVER_URL + "/");
-  }
-  return response.redirect("user/login");
-});
+// router.get("/login", (request, response) => {
+//   if (request.isAuthenticated()) {
+//     return response.redirect(process.env.REACT_APP_SERVER_URL + "/");
+//   }
+//   return response.redirect("user/login");
+// });
 
 router.post("/login",passport.authenticate("local-login"),(request, response, next) => {
     // STEP 1: Check if user is already authenticated
@@ -41,27 +41,27 @@ router.get("/login/verify", (request, response) => {
   }
 });
 
-router.get("/register", async (request, response) => {
-  if (request.isAuthenticated()) {
-    return response.redirect(
-      process.env.REACT_APP_SERVER_URL + "/user/profile"
-    );
-  } else {
-    response.redirect(process.env.REACT_APP_SERVER_URL + "/user/register");
-  }
-});
+// router.get("/register", async (request, response) => {
+//   if (request.isAuthenticated()) {
+//     return response.redirect(
+//       process.env.REACT_APP_SERVER_URL + "/user/profile"
+//     );
+//   } else {
+//     response.redirect(process.env.REACT_APP_SERVER_URL + "/user/register");
+//   }
+// });
 
-router.get("/profile", (request, response) => {
-  console.log("hello profile");
-  console.log("Authenticated user : ", request.user.email);
-  if (request.isAuthenticated()) {
-    return response.redirect(
-      process.env.REACT_APP_SERVER_URL + "/user/Profile"
-    );
-  } else {
-    return response.redirect(process.env.REACT_APP_SERVER_URL + "/user/login");
-  }
-});
+// router.get("/profile", (request, response) => {
+//   console.log("hello profile");
+//   console.log("Authenticated user : ", request.user.email);
+//   if (request.isAuthenticated()) {
+//     return response.redirect(
+//       process.env.REACT_APP_SERVER_URL + "/user/Profile"
+//     );
+//   } else {
+//     return response.redirect(process.env.REACT_APP_SERVER_URL + "/user/login");
+//   }
+// });
 
 router.post(
   "/register/email",

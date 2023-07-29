@@ -34,16 +34,12 @@ const educationDetails = mongoose.model('educationDetails', educationDetailsSche
 
 async function validate(educationDetails){
     const schema = Joi.object({
-        collegeName: Joi.string().required().max(255),
-        branchOfStudy: Joi.string().required().max(255),
-        educationLevel: Joi.string().required().max(255),
-
-        // TODO: ONE MORE VALIDATION FOR START DATE TO BE
-        //  LESS THAN END DATA NEEDS TO BE ADDED
-        startDate: Joi.number().required(),
-        endDate: Joi.number().required(),
-
-    });
+        collegeName: Joi.string().max(255).required(),
+        branchOfStudy: Joi.string().max(255).required(),
+        educationLevel: Joi.string().max(255).required(),
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required(),
+    }).options({ abortEarly: false });
 
     return schema.validate(educationDetails);
 }
