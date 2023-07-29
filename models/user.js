@@ -86,24 +86,17 @@ const User = mongoose.model('User', userSchema);
 // PASSPORT Strategy for User Login
 passport.use('local-login', new LocalStrategy({
     passReqToCallback: true
-  },async function(request, user_email, user_password, done) {
+  },async function(request, user_email, entered_password, done) {
     console.log('Received User login request');
     // STEP 1: Find is user with email exists
-    console.log(user_email);
-    // Find if user exists in the registered users.
     User.findOne({ email: user_email}).exec()
     .then(async user => {
-        console.log("User found with email : ", user.email);
-        console.log("Comparing passwords");
-        console.log("User Password : ", user.password);
-        console.log("Form entered password : ", user_password);
-
-        console.log("!user || !bcrypt.compareSync(user_password, user.password) : ", (!user || !bcrypt.compareSync(user_password, user.password)));
-        console.log("!user : ", (!user));
-        console.log("!bcrypt.compareSync(user_password, user.password)",(!user || !bcrypt.compareSync(user_password, user.password)));
-
-        if (!user || await bcrypt.compare(user_password, user.password)) {
+        if(!user){
+            console.log("---------------THIS USER IS UNDEFINED-----------------");
+        }
+        if (!user || entered_password.localeCompare(user.password) !== 0){
             // STEP 2: User does not exist, create new user.
+            console.log("Invalid email or password"); 
             return done(null, false, {
                 message: "Invalid email or password"
             });
@@ -117,7 +110,6 @@ passport.use('local-login', new LocalStrategy({
                     message: "You have previously signed up with a different sign in method"
                 });
             }
-
             request.user = user;
             console.log("Returning user");
             // STEP 4: Successfully logged in
@@ -189,6 +181,7 @@ passport.use(
                             console.log(err.message);
                             reject(err)
                         })
+                    console.log("New User created succesfully : ", newUser);
                 } else {
                     // USER Already Exists in the database
                     // TODO:: This function is redundant for users who are already present, they should not get the user activation link in the first place
