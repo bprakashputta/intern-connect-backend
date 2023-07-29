@@ -15,8 +15,7 @@ function isAuthenticated(request, response, next) {
 }
 
 // Get a specific job with applied status by ID for a specific user
-router.get(
-  "/user/:user_id/view/:job_id/",
+router.get("/user/:user_id/view/:job_id/",
   isAuthenticated,
   async (request, response) => {
     try {
@@ -54,6 +53,19 @@ router.get(
     }
   }
 );
+
+// Get all jobs created by specific company
+router.get("/:companyId/myjobs", async (request, response) => {
+  try {
+    let companyId = request.params.companyId;
+    let company = await Company.findOne({ companyId: companyId });
+    const Jobs = await Job.find({ company_id: company._id });
+    console.log(Jobs);
+    response.json({ jobs: Jobs });
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+});
 
 // Get all user details applied for a specific job
 router.get("/:jobid/appliedby", async (request, response) => {
