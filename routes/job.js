@@ -14,6 +14,47 @@ function isAuthenticated(request, response, next) {
   next();
 }
 
+// Get a specific job with applied status by ID for a specific user
+router.get(
+  "/user/:user_id/view/:job_id/",
+  isAuthenticated,
+  async (request, response) => {
+    try {
+      console.log("user/view/:id");
+      const job_id = request.params.job_id;
+      const userId = request.params.userId;
+
+      const jobDetails = await Job.findOne({ job_id });
+
+      if (!jobDetails) {
+        return response.status(404).json({ message: "Job not found" });
+      }
+
+      const jobApplication = await JobApplication.findOne({
+        job_id: jobDetails.job_id,
+        user_id: userId,
+      });
+      if (jobApplication) {
+        const job = {
+          ...jobDetails.toObject(),
+          applied: true,
+        };
+        console.log("job With applied status", job);
+        response.json({ job });
+      } else {
+        const job = {
+          ...jobDetails.toObject(),
+          applied: false,
+        };
+        console.log("job With applied status", job);
+        response.json({ job });
+      }
+    } catch (error) {
+      response.status(500).json({ message: "Failed to retrieve job", error });
+    }
+  }
+);
+
 // Get all user details applied for a specific job
 router.get("/:jobid/appliedby", async (request, response) => {
   try {
