@@ -7,6 +7,16 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
 
+// get-key
+router.get("/get-key", async (req, res) => {
+  try {
+    res.status(200).json({ key_id: process.env.RAZORPAY_ID_KEY });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error!" });
+    console.log(error);
+  }
+});
+
 // Check razorpay connection
 router.get("/connection-check", async (req, res) => {
   try {
@@ -24,6 +34,8 @@ router.get("/connection-check", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
 
 // GET transaction history
 router.get('/history', async (req, res) => {

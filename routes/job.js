@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const Joi = require("joi");
+const {Company} = require("../models/company");
 const { Job } = require("../models/job");
 const { JobApplication } = require("../models/jobApplication");
 const { Task } = require("../models/task");
@@ -9,7 +10,6 @@ const { User } = require("../models/user");
 const jobValidation = require("../validations/jobValidation");
 const generateJobId = require("../utilities/generateJobId");
 
-// Define the isAuthenticated middleware
 function isAuthenticated(request, response, next) {
   next();
 }
