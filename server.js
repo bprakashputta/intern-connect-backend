@@ -75,6 +75,8 @@ const job = require("./routes/job");
 const task = require("./routes/task");
 const taskAllotment = require("./routes/taskAllotment");
 const jobApplication = require("./routes/jobApplication");
+const paymentRoutes = require("./routes/payment");
+const certificate = require("./routes/certificate");
 
 app.use("/user", user);
 app.use("/auth", auth);
@@ -82,8 +84,10 @@ app.use("/company", company);
 app.use("/jobs", job);
 app.use("/task", task);
 app.use("/taskallotment", taskAllotment);
+app.use("/certificate", certificate);
 app.use("/jobapplication", jobApplication);
 app.use("/file", fileUploadRouter);
+app.use("/payment", paymentRoutes);
 
 // GET ROUTE for HOME PAGE
 // app.get("/", (request, response) => {
