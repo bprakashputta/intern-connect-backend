@@ -3,7 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const Joi = require("joi");
 const { Task } = require("../models/task");
-const {TaskAllotment} = require("../models/taskAllotment");
+const { Job } = require("../models/job");
+const { TaskAllotment } = require("../models/taskAllotment");
 const taskValidation = require("../validations/taskValidation");
 const generateTaskId = require("../utilities/generateTaskId");
 
@@ -17,18 +18,21 @@ router.get("/all", async (request, response) => {
   try {
     console.log("Requested - GET ALL TASKS");
     const tasks = await Task.find();
-    return response.json({tasks: tasks});
+    return response.json({ tasks: tasks });
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
 });
 
-
 // Get all tasks for a specific user
 router.get("/:userid/all", async (request, response) => {
   try {
-    const taskAllotments = await TaskAllotment.find({user_id: request.params.userid});
-    const tasks = await Task.find({task_id: taskAllotments.map(taskAllotment => taskAllotment.task_id)});
+    const taskAllotments = await TaskAllotment.find({
+      user_id: request.params.userid,
+    });
+    const tasks = await Task.find({
+      task_id: taskAllotments.map((taskAllotment) => taskAllotment.task_id),
+    });
     const tasksWithIds = tasks.map((task) => {
       const correspondingTaskAllotment = taskAllotments.find(
         (taskAllotment) => taskAllotment.task_id === task.task_id
@@ -40,14 +44,11 @@ router.get("/:userid/all", async (request, response) => {
           : null,
       };
     });
-    return response.json({tasks: tasksWithIds});
+    return response.json({ tasks: tasksWithIds });
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
-
 });
-
-
 
 // Use the isAuthenticated middleware in your route handler
 router.post("/", isAuthenticated, (req, res) => {
@@ -57,23 +58,21 @@ router.post("/", isAuthenticated, (req, res) => {
 // Create a new task
 router.post("/create", async (request, response) => {
   try {
-    console.log("Requested - CREATE TASK")
+    console.log("Requested - CREATE TASK");
     // Generate task id using generate task id function
     let taskId = await generateTaskId();
 
     request.body.task_id = taskId;
-    console.log("check 1")
+    const job = await Job.findOne({ job_id: request.body.job_id });
+    request.body.job_id = job._id.toString();;
     const { error } = await taskValidation(request.body);
-    console.log("check 2");
     if (error) {
       console.log(error);
       return response.status(400).json({ error: error.details[0].message });
     }
-    console.log("check 3");
 
     const newTask = new Task(request.body);
     const savedTask = await newTask.save();
-    console.log("new task is created")
     return response.status(201).json(savedTask);
   } catch (error) {
     return response.status(500).json({ error: error.message });

@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const Joi = require("joi");
-const {Company} = require("../models/company");
+const { Company } = require("../models/company");
 const { Job } = require("../models/job");
 const { JobApplication } = require("../models/jobApplication");
 const { Task } = require("../models/task");
 const { User } = require("../models/user");
+const { TaskAllotment } = require("../models/taskAllotment");
 const jobValidation = require("../validations/jobValidation");
 const generateJobId = require("../utilities/generateJobId");
 
@@ -15,7 +16,8 @@ function isAuthenticated(request, response, next) {
 }
 
 // Get a specific job with applied status by ID for a specific user
-router.get("/user/:user_id/view/:job_id/",
+router.get(
+  "/user/:user_id/view/:job_id/",
   isAuthenticated,
   async (request, response) => {
     try {
@@ -178,12 +180,53 @@ router.get("/show/:userId", async (req, res) => {
 // Get all tasks related to a specific Job
 router.get("/:jobid/tasks/all", async (request, response) => {
   try {
+    const job = await Job.findOne({ job_id: request.params.jobid });
+    const tasks = await Task.find({ job_id: job._id });
+    return response.json({ tasks: tasks });
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+});
+
+// Get all tasks related to a specific Job for a specifc user
+router.get("/:userid/:jobid/tasks/all", async (request, response) => {
+  try {
     const tasks = await Task.find({ job_id: request.params.jobid });
     return response.json({ tasks: tasks });
   } catch (error) {
     return response.status(500).json({ error: error.message });
   }
 });
+
+router.get(
+  "/:jobid/tasks/:taskid/allotments/all",
+  async (request, response) => {
+    try {
+      const allotments = await TaskAllotment.find({
+        task_id: request.params.taskid,
+      });
+
+      const userIds = allotments.map((allotment) => allotment.user_id);
+
+      const users = await User.find({ _id: { $in: userIds } })
+        .select("firstName lastName email profilePhoto")
+        .lean();
+
+      const usersWithAllotmentId = allotments.map((allotment) => {
+        const correspondingUser = users.find((user) =>
+          user._id.equals(allotment.user_id)
+        );
+        return {
+          ...correspondingUser,
+          allotment_id: allotment._id,
+        };
+      });
+      return response.json({ users: usersWithAllotmentId });
+    } catch (error) {
+      return response.status(500).json({ error: error.message });
+    }
+  }
+);
 
 // Use the isAuthenticated middleware in your route handler
 router.post("/", isAuthenticated, (req, res) => {
