@@ -222,7 +222,7 @@ passport.use(new GoogleStrategy(
                     socialProfileId: profile.id,
                     username: profile.name.givenName + Date.now(),
                     firstName: profile.name.givenName,
-                    lastName: profile.name.familyName,
+                    lastName: profile.name.familyName || "",
                     email: profile.emails[0].value,
                     password: Math.random().toString(36).slice(2, 10),
                     profilePhoto: profile.photos[0].value,
