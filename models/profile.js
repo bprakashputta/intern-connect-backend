@@ -29,21 +29,6 @@ const profileSchema = new mongoose.Schema({
 
 const Profile = mongoose.model('Profile', profileSchema);
 
-async function validate(profile){
-
-    // TODO: HAVE TO WRITE VALIDATION SCHEMA FOR PROFILE
-
-    // const schema = Joi.object({
-    //     name: Joi.string().required().min(5).max(255),
-    //     emailId: Joi.string().max(255).required().email(),
-    //     // password: Joi.string().required().min(8).max(255),
-    //     isAdmin: Joi.boolean(),
-    //     resumelink: Joi.string().max(500)
-    // });
-    //
-    // return schema.validate(profile);
-}
 
 module.exports.profileSchema= profileSchema;
-module.exports.validate = validate;
 module.exports.Profile = Profile;

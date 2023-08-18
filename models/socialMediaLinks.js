@@ -16,7 +16,7 @@ const socialMediaLinksSchema = new mongoose.Schema({
     }
 });
 
-const socialMediaLinks = mongoose.model('SocialMediaLinks', socialMediaLinksSchema);
+const SocialMediaLinks = mongoose.model('SocialMediaLinks', socialMediaLinksSchema);
 
 async function validate(socialMediaLinks){
     const schema = Joi.object({
@@ -29,5 +29,5 @@ async function validate(socialMediaLinks){
 }
 
 module.exports.socialMediaLinksSchema= socialMediaLinksSchema;
-module.exports.validate = validate;
-module.exports.socialMediaLinks = socialMediaLinks;
+module.exports.validateSocialMediaLinks = validate;
+module.exports.SocialMediaLinks = SocialMediaLinks;
