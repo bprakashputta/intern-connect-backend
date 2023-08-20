@@ -77,6 +77,7 @@ const taskAllotment = require("./routes/taskAllotment");
 const jobApplication = require("./routes/jobApplication");
 const paymentRoutes = require("./routes/payment");
 const certificate = require("./routes/certificate");
+const profile = require("./routes/profile");
 
 app.use("/user", user);
 app.use("/auth", auth);
@@ -88,6 +89,7 @@ app.use("/certificate", certificate);
 app.use("/jobapplication", jobApplication);
 app.use("/file", fileUploadRouter);
 app.use("/payment", paymentRoutes);
+app.use('/profile', profile);
 
 // GET ROUTE for HOME PAGE
 // app.get("/", (request, response) => {

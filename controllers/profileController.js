@@ -1,24 +1,19 @@
 const Profile = require('../models/profile');
 const User = require('../models/user');
-const PersonalDetails = require('../models/personalDetails');
-const EducationalDetails = require('../models/educationalDetails');
-const WorkExperienceDetails = require('../models/workExperienceDetails');
-const SocialMediaLinks = require('../models/socialMediaLinks');
-const Skill = require('../models/skillset');
-
-const { validatePersonalDetails } = require('../models/personalDetails');
-const { validateEducationalDetails } = require('../models/educationalDetails');
-const { validateWorkExperienceDetails } = require('../models/workExperienceDetails');
-const { validateSocialMediaLinks } = require('../models/socialMediaLinks');
-const { validateSkillset } = require('../models/skillset');
+const { validatePersonalDetails, PersonalDetails } = require('../models/personalDetails');
+const { validateEducationalDetails, EducationalDetails } = require('../models/educationalDetails');
+const { validateWorkExperienceDetails, WorkExperienceDetails } = require('../models/workExperienceDetails');
+const { validateSocialMediaLinks, SocialMediaLinks } = require('../models/socialMediaLinks');
+const { validateSkillset, Skillset } = require('../models/skillset');
 
 exports.createProfile = async (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: 'You need to be logged in to create a profile' });
-    }
-    // Validate the request body using the validateProfile function
-    const { error: profileError } = validateProfile(req.body);
-  
+    console.log("Request Arrived here in profile");
+    console.log(req.user);
+    console.log(req.isAuthenticated());
+    // if (req.isAuthenticated()) {
+    //     return res.status(401).json({ error: 'You need to be logged in to create a profile' });
+    // }
+    // Validate the request body using the validateProfile function  
     // Validate each nested model separately
     const { error: personalDetailsError } = validatePersonalDetails(req.body.personal_details);
     const { error: educationalDetailsError } = validateEducationalDetails(req.body.educational_details);
@@ -27,9 +22,8 @@ exports.createProfile = async (req, res) => {
     const { error: skillsetError } = validateSkillset(req.body.skillset);
   
     // Check if any validation errors exist
-    if (profileError || personalDetailsError || educationalDetailsError || workExperienceDetailsError || socialMediaLinksError || skillsetError) {
+    if (personalDetailsError || educationalDetailsError || workExperienceDetailsError || socialMediaLinksError || skillsetError) {
         const errors = {
-            profile: profileError ? profileError.details[0].message : undefined,
             personal_details: personalDetailsError ? personalDetailsError.details[0].message : undefined,
             educational_details: educationalDetailsError ? educationalDetailsError.details[0].message : undefined,
             work_experience_details: workExperienceDetailsError ? workExperienceDetailsError.details[0].message : undefined,
@@ -41,29 +35,80 @@ exports.createProfile = async (req, res) => {
 
     try {
         // Create instances of the nested models and save them to the database
-        const personalDetails = new PersonalDetails(req.body.personal_details);
-        const educationalDetails = new EducationalDetails(req.body.educational_details);
-        const workExperienceDetails = new WorkExperienceDetails(req.body.work_experience_details);
-        const socialMediaLinks = new SocialMediaLinks(req.body.social_media_links);
-        const skillset = new Skillset(req.body.skillset);
+        const personalDetailsData = req.body.personal_details;
+        const personalDetails = new PersonalDetails({
+            givenName: personalDetailsData.givenName,
+            surname: personalDetailsData.surname,
+            preferredName: personalDetailsData.preferredName,
+            emailId: personalDetailsData.emailId,
+            mobileNumber: personalDetailsData.mobileNumber,
+            location: personalDetailsData.location
+        });
+        console.log(personalDetails);
+        
+        const educationalDetailsData = req.body.educational_details;
+        const educationalDetails = new EducationalDetails({
+            collegeName: educationalDetailsData.collegeName,
+            branchOfStudy: educationalDetailsData.branchOfStudy,
+            educationLevel: educationalDetailsData.educationLevel,
+            startDate: educationalDetailsData.startDate,
+            endDate: educationalDetailsData.endDate
+        });
+        console.log(educationalDetails);
+
+        const workExperienceDetailsData = req.body.work_experience_details;
+        const workExperienceDetails = new WorkExperienceDetails({
+            experience: workExperienceDetailsData.experience.map(exp => ({
+                companyName: exp.companyName,
+                roles: exp.roles.map(role => ({
+                    roleName: role.roleName,
+                    roleType: role.roleType,
+                    startDate: role.startDate,
+                    endDate: role.endDate,
+                    description: role.description
+                }))
+            }))
+        });
+        console.log(workExperienceDetails);
+        
+        const socialMediaLinksData = req.body.social_media_links;
+        const socialMediaLinks = new SocialMediaLinks({
+            githubURL: socialMediaLinksData.githubURL,
+            linkedinURL: socialMediaLinksData.linkedinURL,
+            portfolioURL: socialMediaLinksData.portfolioURL
+        });
+        console.log(socialMediaLinks);
+
+        const skillsetData = req.body.skillset;
+        const skills = skillsetData.map(skill => ({
+            name: skill.name,
+            level: skill.level
+        }));
+        const skillset = new Skillset({
+            skills: skills
+        });
+        console.log(skillset);
 
         await personalDetails.save();
         await educationalDetails.save();
         await workExperienceDetails.save();
         await socialMediaLinks.save();
         await skillset.save();
-
+        console.log('Created objects for profile');
+        
         // Create the main profile document with references to the saved nested models
         const profile = new Profile({
-        personal_details: personalDetails._id,
-        educational_details: educationalDetails._id,
-        work_experience_details: workExperienceDetails._id,
-        social_media_links: socialMediaLinks._id,
-        skillset: skillset._id,
+            personal_details: personalDetails._id,
+            educational_details: educationalDetails._id,
+            work_experience_details: workExperienceDetails._id,
+            social_media_links: socialMediaLinks._id,
+            skillset: skillset.skills.map(skill => skill._id),
         // Include other profile fields here, if any
         });
 
+        console.log('profile has been created');
         await profile.save();
+        console.log('profile has been saved');
 
         // Link the newly created profile to the user
         const user = await User.findById(req.user._id);
@@ -99,7 +144,7 @@ exports.getProfileById = async (req, res) => {
 };
 
 // Update a profile by ID
-exports.updateProfile = async (req, res) => {
+exports.updateProfileById = async (req, res) => {
     
     if (!req.isAuthenticated()) {
         return res.status(401).json({ error: 'You need to be logged in to create a profile' });
@@ -145,7 +190,7 @@ exports.updateProfile = async (req, res) => {
   
 
 // Delete a profile by ID
-exports.deleteProfile = async (req, res) => {
+exports.deleteProfileById = async (req, res) => {
     if (!req.isAuthenticated()) {
         return res.status(401).json({ error: 'You need to be logged in to create a profile' });
     }

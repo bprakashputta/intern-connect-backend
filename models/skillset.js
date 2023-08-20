@@ -42,4 +42,5 @@ async function validate(skillsetSchema){
     return schema.validate(skillsetSchema);
 }
 
-module.exports = { Skillset, validate };
+module.exports.Skillset =  Skillset;
+module.exports.validateSkillset = validate;
