@@ -17,10 +17,10 @@ router.get('/google/register',
     passport.authenticate('google', 
     {
         scope: ["profile", "email"],
-        failureRedirect: '/user/register'
+        failureRedirect: '/user/register/home'
     }),
     (request, response)=>{
-        response.redirect("/user/profile");
+        response.redirect("/");
     }
 );
 
