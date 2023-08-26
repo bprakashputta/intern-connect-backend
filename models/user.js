@@ -132,7 +132,7 @@ passport.use(
     console.log("Sign Up request : ",user);
     // console.log("Token : ", token);
     // STEP 1: Generate activation link and send email.
-    const link = 'http://localhost:8080/user/register/email/verify?token=' + token;
+    const link = process.env.BACKEND_APP_SERVER_URL+"/user/register/email/verify?token=" + token;
     const msg = {
       to: user.email,
       from: process.env.SENDGRID_EMAIL_ID,
