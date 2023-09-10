@@ -257,19 +257,6 @@ passport.use(new GoogleStrategy(
     }
 ));
 
-// Searialize and De-Serialize user
-passport.serializeUser((user, cb)=>{
-    process.nextTick(()=>{
-      cb(null, { id: user.id, username: user.username, name: user.firstName + ' ' + user.lastName });
-    });
-});
-
-passport.deserializeUser((user, cb)=>{
-    process.nextTick(()=>{
-        return cb(null, user);
-    });
-});
-
 async function validate(user){
     const schema = Joi.object({
         username: Joi.string().max(255).min(6),

@@ -5,7 +5,7 @@ const skillsetSchema = new mongoose.Schema({
   skills: {
     type: [
       {
-        name: {
+        skillName: {
           type: String,
           required: true,
           maxlength: 100,
@@ -24,14 +24,13 @@ const skillsetSchema = new mongoose.Schema({
 
 const Skillset = mongoose.model('Skillset', skillsetSchema);
 
-
 async function validate(skillsetSchema){
     // Joi validation schema
     const schema = Joi.object({
         skills: Joi.array()
         .items(
             Joi.object({
-            name: Joi.string().required().max(100),
+            skillName: Joi.string().required().max(100),
             proficiency: Joi.string().valid('Beginner', 'Intermediate', 'Advanced', 'Expert').default('Beginner'),
             })
         )
@@ -42,4 +41,5 @@ async function validate(skillsetSchema){
     return schema.validate(skillsetSchema);
 }
 
-module.exports = { Skillset, validate };
+module.exports.Skillset =  Skillset;
+module.exports.validateSkillset = validate;

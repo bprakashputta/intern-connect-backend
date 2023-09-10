@@ -46,7 +46,7 @@ const workExperienceDetailsSchema = new mongoose.Schema({
     }
 });
 
-const workExperienceDetails = mongoose.model('workExperienceDetails', workExperienceDetailsSchema);
+const WorkExperienceDetails = mongoose.model('WorkExperienceDetails', workExperienceDetailsSchema);
 
 async function validate(workExperienceDetails){
     const roleSchema = Joi.object({
@@ -70,5 +70,5 @@ async function validate(workExperienceDetails){
 }
 
 module.exports.workExperienceDetailsSchema= workExperienceDetailsSchema;
-module.exports.validate = validate;
-module.exports.workExperienceDetails = workExperienceDetails;
+module.exports.validateWorkExperienceDetails = validate;
+module.exports.WorkExperienceDetails = WorkExperienceDetails;

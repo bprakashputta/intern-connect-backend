@@ -37,7 +37,7 @@ const personalDetailsSchema = new mongoose.Schema({
 
 });
 
-const personalDetails = mongoose.model('PersonalDetails', personalDetailsSchema);
+const PersonalDetails = mongoose.model('PersonalDetails', personalDetailsSchema);
 
 async function validate(personalDetails){
     const schema = Joi.object({
@@ -53,5 +53,5 @@ async function validate(personalDetails){
 }
 
 module.exports.personalDetailsSchema= personalDetailsSchema;
-module.exports.validate = validate;
-module.exports.personalDetails = personalDetails;
+module.exports.validatePersonalDetails = validate;
+module.exports.PersonalDetails = PersonalDetails;

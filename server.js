@@ -58,10 +58,22 @@ app.use(
 );
 
 // Initialize passport session
-app.use(passport.authenticate("session"));
 app.use(passport.initialize());
+app.use(passport.authenticate("session"));
 app.use(passport.session());
-app.use(flash());
+
+// Searialize and De-Serialize user
+passport.serializeUser((user, cb)=>{
+  process.nextTick(()=>{
+    cb(null, { id: user.id, username: user.username, name: user.firstName + ' ' + user.lastName });
+  });
+});
+
+passport.deserializeUser((user, cb)=>{
+  process.nextTick(()=>{
+      return cb(null, user);
+  });
+});
 
 // Connect to MongoDB Database
 const dbConnect = require("./middlewares/dbConnect");
@@ -77,6 +89,7 @@ const taskAllotment = require("./routes/taskAllotment");
 const jobApplication = require("./routes/jobApplication");
 const paymentRoutes = require("./routes/payment");
 const certificate = require("./routes/certificate");
+const profile = require("./routes/profile");
 
 app.use("/user", user);
 app.use("/auth", auth);
@@ -88,6 +101,7 @@ app.use("/certificate", certificate);
 app.use("/jobapplication", jobApplication);
 app.use("/file", fileUploadRouter);
 app.use("/payment", paymentRoutes);
+app.use("/profile", profile);
 
 // GET ROUTE for HOME PAGE
 // app.get("/", (request, response) => {
@@ -117,11 +131,5 @@ app.listen(PORT, (err) => {
     console.log("SERVER RAN INTO AN ERROR : ", err);
     return err;
   }
-  console.log("####################################");
   console.log(`SERVER IS RUNNING ON PORT : ${PORT}`);
-  console.log(process.env.AWS_ACCESS_KEY_ID);
-  console.log(process.env.AWS_SECRET_ACCESS_KEY);
-  console.log(process.env.REGION);
-  console.log(process.env.BUCKET);
-  console.log("####################################");
 });
