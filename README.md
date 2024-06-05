@@ -38,7 +38,7 @@ There should be a feature similar to Google Classroom where a selected candidate
 Post-completion of the internship, the certificate should be shared, and payment should be collected for the certificate.
 
 
-Routes
+#### Routes
     User route
     Platform route
     Profile route
@@ -48,65 +48,65 @@ Routes
     Social media profiles URL route
 
 
-Models
-User Model
-Username
-Email id
-Password
-Profile Id
-Profile Model
-Personal details
-Given name 
-Surname
-Preferred name
-Email Id:
-Mobile number 
-Location
-Education details
-College Name
-Branch of study
-Education level
-Start time - calendar 
-End time - calendar 
-Work Experience details
-Company name
-Role
-Type of role(full-time or internship)
-Start date
-End date
-Social Media links
-LinkedIn URL
-GitHub URL
-Portfolio URL
-Skillset - It will be an array of different skills that the user has
+#### Models
+
+##### User Model
+    Username
+    Email id
+    Password
+    Profile Id
+    Profile Model
+    Personal details
+    Given name 
+    Surname
+    Preferred name
+    Email Id:
+    Mobile number 
+    Location
+    Education details
+    College Name
+    Branch of study
+    Education level
+    Start time - calendar 
+    End time - calendar 
+    Work Experience details
+    Company name
+    Role
+    Type of role(full-time or internship)
+    Start date
+    End date
+    Social Media links
+    LinkedIn URL
+    GitHub URL
+    Portfolio URL
+    Skillset - It will be an array of different skills that the user has
 
 
-Company Model
-Schema of company
-Company Name
-Company Id 
-Description
-About
-Website link
-Array of Jobs
-Jobs Model
-Schema of a job will contain
-Role_name
-Job_id
-Location
-Type of job
-Skills required
-Description
-Company_id - refers to schema of company.
+##### Company Model
+    Company Name
+    Company Id 
+    Description
+    About
+    Website link
+    Array of Jobs
+
+##### Jobs Model
+    Role_name
+    Job_id
+    Location
+    Type of job
+    Skills required
+    Description
+    Company_id - refers to schema of company.
 
 
 
 
-TODO’s
-Display internships
-Admin panel to modify data on the website
-Assign tasks to a selected intern
-Intern after completing intern should pay to get the certificate of internship.
+### TODO’s
+    Display internships
+    Admin panel to modify data on the website
+    Assign tasks to a selected intern
+    Intern after completing intern should pay to get the certificate of internship.
  
 
 
@@ -114,25 +114,12 @@ Intern after completing intern should pay to get the certificate of internship.
 
 
 
+### Other To-do’s 
+    Company page
+    List of internships
+    Mapping jobs based on skillset, adding filters to queries
+    Admin Panel
 
-PROJECT DEMO - 21/05/2023
-Features to be completed for Demo:-
-User signup and login
-User signup and log in with user Google account
-Home page
-About us
-Contact us
-Profile filling page upon signup
-User profile page post signup
-
-Other To-do’s 
-Company page
-List of internships
-Mapping jobs based on skillset, adding filters to queries
-Admin Panel
-
-
-
-Admin Panel Features:-
-Admin should be able to modify everything on the website through the admin panel. 
-Content like about us, list of internships, company details, user access, company details, modify jobs
+### Admin Panel Features:-
+    Admin should be able to modify everything on the website through the admin panel. 
+    Content like about us, list of internships, company details, user access, company details, modify jobs
